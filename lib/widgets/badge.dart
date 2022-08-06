@@ -1,0 +1,50 @@
+import 'package:flutter/material.dart';
+
+class Badge extends StatelessWidget {
+  const Badge({
+    Key ? key,
+    required this.child,
+    required this.value,
+    this.color,
+  }) : super(key: key);
+
+  final Widget child;
+  final String value;
+  final Color ? color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(0, 0, 25, 0),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          child,
+          Positioned(
+            right: 8,
+            top: 8,
+            child: Container(
+              padding: const EdgeInsets.all(2.0),
+              // color: Theme.of(context).accentColor,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10.0),
+                color: color ?? Theme.of(context).colorScheme.secondary, // ?? = != null
+              ),
+              constraints: const BoxConstraints(
+                minWidth: 16,
+                minHeight: 16,
+              ),
+              child: Text(
+                value,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 10,
+                ),
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
