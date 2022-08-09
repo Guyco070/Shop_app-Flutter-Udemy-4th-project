@@ -1,15 +1,26 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../providers/orders.dart' as ord;
 
-class OrderItem extends StatelessWidget {
+class OrderItem extends StatefulWidget {
   const OrderItem({Key? key, required this.order}) : super(key: key);
 
   final ord.OrderItem order;
 
+  @override
+  State<OrderItem> createState() => _OrderItemState();
+}
+
+class _OrderItemState extends State<OrderItem> {
+  bool _expanded = false;
+
   String get date {
-    return DateFormat('dd/MM/yyyy hh:mm').format(order.dateTime).toString();
+    return DateFormat('dd/MM/yyyy hh:mm')
+        .format(widget.order.dateTime)
+        .toString();
   }
 
   @override
@@ -18,14 +29,42 @@ class OrderItem extends StatelessWidget {
       margin: const EdgeInsets.all(10),
       child: Column(children: [
         ListTile(
-          title: Text('\$${order.amount}'),
+          title: Text('\$${widget.order.amount}'),
           subtitle: Text(date),
           trailing: IconButton(
-            icon: const Icon(Icons.expand_more),
+            icon: Icon( _expanded ? Icons.expand_less : Icons.expand_more),
             onPressed: () {
-              
+              setState(() {
+                _expanded = !_expanded;
+              });
             },
           ),
+        ),
+        if(_expanded) Container(
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 4),
+          height: min(widget.order.products.length * 20 + 25, 100), // minimum height = number of products * 20 + 10, maxinum = 180
+          child: ListView.builder(
+              itemBuilder: ((context, index) => Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                      widget.order.products[index].title,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  Text(
+                      '${widget.order.products[index].quantity} x \$${widget.order.products[index].price}',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        color: Colors.grey,
+                      ),
+                    ),
+                ],
+              )),
+              itemCount: widget.order.products.length,
+            ),
         )
       ]),
     );
