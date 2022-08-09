@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
-import 'package:shop_app/providers/product.dart';
+
+import './product.dart';
 
 class Products with ChangeNotifier {
   // ignore: prefer_final_fields

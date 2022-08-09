@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+
 import '../providers/orders.dart' as ord;
 
 class OrderItem extends StatelessWidget {
@@ -8,7 +9,7 @@ class OrderItem extends StatelessWidget {
   final ord.OrderItem order;
 
   String get date {
-    return DateFormat('dd MM yyyy hh:mm').format(order.dateTime).toString();
+    return DateFormat('dd/MM/yyyy hh:mm').format(order.dateTime).toString();
   }
 
   @override

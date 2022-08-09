@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop_app/providers/cart.dart' show Cart;
-import 'package:shop_app/providers/orders.dart';
-import 'package:shop_app/screens/orders_screen.dart';
-import 'package:shop_app/widgets/cart_item.dart';
+
+import '../providers/cart.dart' show Cart;
+import '../providers/orders.dart';
+import './orders_screen.dart';
+import '../widgets/cart_item.dart';
 
 class CartSceen extends StatelessWidget {
   const CartSceen({Key? key}) : super(key: key);
@@ -39,11 +40,13 @@ class CartSceen extends StatelessWidget {
                     ),
                     TextButton(
                         onPressed: () {
-                          Provider.of<Orders>(context, listen: false).addOrder(
+                          if(cart.items.isNotEmpty) {
+                            Provider.of<Orders>(context, listen: false).addOrder(
                               cart.items.values.toList().cast(),
                               cart.totalAmount);
                           cart.clear();
                           Navigator.pushNamed(context, OrdersScreen.routeName);
+                          }
                         },
                         child: const Text('ORDER NOW')),
                   ],
