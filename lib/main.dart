@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop_app/providers/Cart.dart';
+import 'package:shop_app/providers/cart.dart';
+import 'package:shop_app/providers/orders.dart';
 import 'package:shop_app/providers/products.dart';
 import 'package:shop_app/screens/cart_screen.dart';
+import 'package:shop_app/screens/orders_screen.dart';
 import 'package:shop_app/screens/product_details_screen.dart';
 import 'package:shop_app/screens/products_overview_screen.dart';
 
@@ -13,7 +15,7 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
+  // This widget is the root of   application.
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -22,6 +24,8 @@ class MyApp extends StatelessWidget {
               create: ((context) => Products())), // in case That we creating a new wiget its better use create and not value
         ChangeNotifierProvider(
               create: ((context) => Cart())),
+        ChangeNotifierProvider(
+              create: ((context) => Orders())),
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
@@ -42,6 +46,7 @@ class MyApp extends StatelessWidget {
         routes: {
           ProductDetailsScreen.routeName: (ctx) => const ProductDetailsScreen(),
           CartSceen.routeName:(context) => const CartSceen(),
+          OrdersScreen.routeName:(context) => const OrdersScreen(),
         },
       )
     );
