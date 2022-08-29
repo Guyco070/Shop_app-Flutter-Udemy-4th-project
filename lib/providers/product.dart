@@ -18,6 +18,14 @@ class Product with ChangeNotifier {
     this.isFavorite = false,
   });
 
+  static Object toObject(Product product) => {
+    'title': product.title,
+    'description': product.description,
+    'price': product.price,
+    'imageUrl': product.imageUrl,
+    'isFavorite': product.isFavorite,
+  };
+
   static Product createUpdatedProduct(
       String toUpdate, Object newValue, Product old) {
     Map<String, Object> newProductValues = {
@@ -32,13 +40,13 @@ class Product with ChangeNotifier {
     newProductValues[toUpdate] = newValue;
 
     return Product(
-          id: newProductValues['id'] as String,
-          title: newProductValues['title'] as String,
-          description: newProductValues['description'] as String,
-          price: newProductValues['price'] as double,
-          imageUrl: newProductValues['imageUrl'] as String,
-          isFavorite: newProductValues['isFavorite'] as bool,
-        );
+      id: newProductValues['id'] as String,
+      title: newProductValues['title'] as String,
+      description: newProductValues['description'] as String,
+      price: newProductValues['price'] as double,
+      imageUrl: newProductValues['imageUrl'] as String,
+      isFavorite: newProductValues['isFavorite'] as bool,
+    );
   }
 
   void toggleFavoriteStatus() {

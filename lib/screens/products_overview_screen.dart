@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../providers/products.dart';
 import '../providers/cart.dart';
 import './cart_screen.dart';
 import '../widgets/app_drawer.dart';
@@ -14,13 +15,31 @@ enum FilterOptions {
 
 class ProductsOverviewScreen extends StatefulWidget {
   const ProductsOverviewScreen({Key? key}) : super(key: key);
-  
+
   @override
   State<ProductsOverviewScreen> createState() => _ProductsOverviewScreenState();
 }
 
 class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
   var _showOnlyFavorites = false;
+  bool _isInit = true;
+  bool _isLoading = false;
+
+  @override
+  void didChangeDependencies() {
+    if (_isInit) {
+      _isLoading = true;
+      Provider.of<Products>(context, listen: false)
+          .fetchAndSetProducts()
+          .then((_) => setState(() {
+                _isLoading = false;
+              }));
+    }
+    setState(() {
+      _isInit = false;
+    });
+    super.didChangeDependencies();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,20 +69,25 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
                     const PopupMenuItem(
                         value: FilterOptions.All, child: Text('Show all')),
                   ]),
-              Consumer<Cart>(
-                builder: (_, cart, child) => Badge(
-                  value: cart.itemCount.toString(),
-                  child: child as Widget,
-                ),
-                child: IconButton(
-                    icon: const Icon(Icons.shopping_cart),
-                    onPressed: () => Navigator.pushNamed(context, CartSceen.routeName),
-                  ),
-              ),
+          Consumer<Cart>(
+            builder: (_, cart, child) => Badge(
+              value: cart.itemCount.toString(),
+              child: child as Widget,
+            ),
+            child: IconButton(
+              icon: const Icon(Icons.shopping_cart),
+              onPressed: () =>
+                  Navigator.pushNamed(context, CartSceen.routeName),
+            ),
+          ),
         ],
       ),
       drawer: const AppDrawer(),
-      body: ProductsGrid(_showOnlyFavorites),
+      body: _isLoading
+      ? const Center(
+        child:  CircularProgressIndicator(),
+      ) 
+      : ProductsGrid(_showOnlyFavorites),
     );
   }
 }
