@@ -39,9 +39,7 @@ class UserProductItem extends StatelessWidget {
             IconButton(
               onPressed: () async {
                 try {
-                  await Provider.of<Products>(
-                          context, listen: false) // listen = true for showSnackBar method work properly
-                      .deleteProduct(id);
+                  await Provider.of<Products>(context, listen: false).deleteProduct(id);
                 } catch (error) {
                   scaffoldMessenger.showSnackBar(const SnackBar(
                       content: Text(

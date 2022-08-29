@@ -1,4 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
+import 'package:http/http.dart';
+import 'package:shop_app/models/http_exception.dart';
 
 class Product with ChangeNotifier {
   final String id;
@@ -19,12 +23,12 @@ class Product with ChangeNotifier {
   });
 
   static Object toObject(Product product) => {
-    'title': product.title,
-    'description': product.description,
-    'price': product.price,
-    'imageUrl': product.imageUrl,
-    'isFavorite': product.isFavorite,
-  };
+        'title': product.title,
+        'description': product.description,
+        'price': product.price,
+        'imageUrl': product.imageUrl,
+        'isFavorite': product.isFavorite,
+      };
 
   static Product createUpdatedProduct(
       String toUpdate, Object newValue, Product old) {
@@ -49,9 +53,23 @@ class Product with ChangeNotifier {
     );
   }
 
-  void toggleFavoriteStatus() {
+  void updateFavValue() {
     isFavorite = !isFavorite;
     notifyListeners();
+  }
+
+  Future<void> toggleFavoriteStatus() async {
+    updateFavValue();
+    final url = Uri.parse(
+        'https://shop-app-flutter-73550-default-rtdb.europe-west1.firebasedatabase.app/products/$id.json');
+    final response = await patch(url,
+        body: jsonEncode({
+          'isFavorite': isFavorite,
+        }));
+    if (response.statusCode >= 400) {
+      updateFavValue();
+      throw HttpException('Could not update favorite.');
+    }
   }
 
   @override

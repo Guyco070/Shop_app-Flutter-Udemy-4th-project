@@ -34,15 +34,29 @@ class ProductItem extends StatelessWidget {
                     ? Icons.favorite
                     : Icons.favorite_border),
                 color: Theme.of(context).colorScheme.secondary,
-                onPressed: product.toggleFavoriteStatus,
+                onPressed: () async {
+                  try {
+                    await product.toggleFavoriteStatus();
+                  } catch (error) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          error.toString(),
+                          textAlign: TextAlign.center,
+                        ))
+                    );
+                  }
+                },
               ),
             ),
             trailing: IconButton(
               icon: const Icon(Icons.shopping_cart),
               onPressed: () {
                 cart.addItem(product.id, product.price, product.title);
-                ScaffoldMessenger.of(context).hideCurrentSnackBar(); // in case that snack bar already on the screen
-                ScaffoldMessenger.of(context).showSnackBar( // new vision of - Scaffold.of(context).showSnackBar(...)
+                ScaffoldMessenger.of(context)
+                    .hideCurrentSnackBar(); // in case that snack bar already on the screen
+                ScaffoldMessenger.of(context).showSnackBar(
+                  // new vision of - Scaffold.of(context).showSnackBar(...)
                   SnackBar(
                     content: const Text('Added item to cart!'),
                     duration: const Duration(seconds: 2),
