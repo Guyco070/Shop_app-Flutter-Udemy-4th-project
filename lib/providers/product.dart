@@ -27,7 +27,14 @@ class Product with ChangeNotifier {
         'description': product.description,
         'price': product.price,
         'imageUrl': product.imageUrl,
-        'isFavorite': product.isFavorite,
+      };
+  
+  static Object toObjectWithCreator(String userId, Product product) => {
+        'title': product.title,
+        'description': product.description,
+        'price': product.price,
+        'imageUrl': product.imageUrl,
+        'creator': userId,
       };
 
   static Product createUpdatedProduct(
@@ -38,7 +45,6 @@ class Product with ChangeNotifier {
       'description': old.description,
       'price': old.price,
       'imageUrl': old.imageUrl,
-      'isFavorite': old.isFavorite,
     };
 
     newProductValues[toUpdate] = newValue;
@@ -49,7 +55,6 @@ class Product with ChangeNotifier {
       description: newProductValues['description'] as String,
       price: newProductValues['price'] as double,
       imageUrl: newProductValues['imageUrl'] as String,
-      isFavorite: newProductValues['isFavorite'] as bool,
     );
   }
 
@@ -58,14 +63,14 @@ class Product with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> toggleFavoriteStatus() async {
+  Future<void> toggleFavoriteStatus(String token, String userId) async {
     updateFavValue();
     final url = Uri.parse(
-        'https://shop-app-flutter-73550-default-rtdb.europe-west1.firebasedatabase.app/products/$id.json');
-    final response = await patch(url,
-        body: jsonEncode({
-          'isFavorite': isFavorite,
-        }));
+        'https://shop-app-flutter-73550-default-rtdb.europe-west1.firebasedatabase.app/userFavorites/$userId/$id.json?auth=$token');
+    final response = await put(url,
+        body: jsonEncode(
+          isFavorite,
+        ));
     if (response.statusCode >= 400) {
       updateFavValue();
       throw HttpException('Could not update favorite.');

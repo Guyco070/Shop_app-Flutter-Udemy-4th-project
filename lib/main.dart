@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop_app/providers/auth.dart';
+import 'package:shop_app/providers/product.dart';
 import 'package:shop_app/screens/edit_product_screen.dart';
+import 'package:shop_app/screens/splash_screen.dart';
 import 'package:shop_app/screens/user_products_screen.dart';
 
 import './providers/cart.dart';
@@ -10,6 +13,7 @@ import './screens/cart_screen.dart';
 import './screens/orders_screen.dart';
 import './screens/product_details_screen.dart';
 import './screens/products_overview_screen.dart';
+import './screens/auth_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -23,36 +27,46 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-              create: ((context) => Products())), // in case That we creating a new wiget its better use create and not value
+        ChangeNotifierProvider(create: ((context) => Auth())), // must be before ChangeNotifierProxyProvider<Auth, Products>
+        ChangeNotifierProxyProvider<Auth, Products>(
+                update: ((context, auth, previousProducts) => Products(auth.token, auth.userId,(previousProducts  as Products).items)),
+                create: (context) => Products(null, null,[]),
+              ), // in case That we creating a new wiget its better use create and not value
         ChangeNotifierProvider(
               create: ((context) => Cart())),
-        ChangeNotifierProvider(
-              create: ((context) => Orders())),
+        ChangeNotifierProxyProvider<Auth, Orders>(
+                update: ((context, auth, previousOrders) => Orders(auth.token, auth.userId, (previousOrders  as Orders).orders)),
+                create: (context) => Orders(null, null, []),
+              ),
       ],
-      child: MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          textTheme: const TextTheme(
-            titleSmall: TextStyle(
-              color: Colors.white,
-            )
+      child: Consumer<Auth>(builder: (context, auth, _) =>  MaterialApp(
+          title: 'Flutter Demo',
+          theme: ThemeData(
+            textTheme: const TextTheme(
+              titleSmall: TextStyle(
+                color: Colors.white,
+              )
+            ),
+            primarySwatch: Colors.purple,
+            // ignore: deprecated_member_use
+            accentColor: Colors.deepOrange,
+            colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.purple)
+                .copyWith(secondary: Colors.deepOrange),
+            fontFamily: 'Lato',
           ),
-          primarySwatch: Colors.purple,
-          // ignore: deprecated_member_use
-          accentColor: Colors.deepOrange,
-          colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.purple)
-              .copyWith(secondary: Colors.deepOrange),
-          fontFamily: 'Lato',
+          home: auth.isAuth ? const ProductsOverviewScreen() 
+          : FutureBuilder(
+                future: auth.tryAutoLogin(), 
+                builder: (context, authResultSnapshot) => authResultSnapshot.connectionState == ConnectionState.waiting ? const SplashScreen() : AuthScreen(),
+              ),
+          routes: {
+            ProductDetailsScreen.routeName: (ctx) => const ProductDetailsScreen(),
+            CartSceen.routeName:(context) => const CartSceen(),
+            OrdersScreen.routeName:(context) => const OrdersScreen(),
+            UserProductsScreen.routeName:(context) => const UserProductsScreen(),
+            EditProductScreen.routeName:(context) => const EditProductScreen(),
+          },
         ),
-        home: const ProductsOverviewScreen(),
-        routes: {
-          ProductDetailsScreen.routeName: (ctx) => const ProductDetailsScreen(),
-          CartSceen.routeName:(context) => const CartSceen(),
-          OrdersScreen.routeName:(context) => const OrdersScreen(),
-          UserProductsScreen.routeName:(context) => const UserProductsScreen(),
-          EditProductScreen.routeName:(context) => const EditProductScreen(),
-        },
       )
     );
   }
