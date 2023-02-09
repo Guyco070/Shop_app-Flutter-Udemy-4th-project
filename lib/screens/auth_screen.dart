@@ -115,8 +115,7 @@ class _AuthCardState extends State<AuthCard>
     _controller = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 300));
     _slideAnimation = Tween<Offset>(
-            begin: const Offset(0, -1.5),
-            end: const Offset(0, 0))
+            begin: const Offset(0, -1.5), end: const Offset(0, 0))
         .animate(
             CurvedAnimation(parent: _controller, curve: Curves.fastOutSlowIn));
     _slideAnimation.addListener(() => setState(() {}));
@@ -256,9 +255,8 @@ class _AuthCardState extends State<AuthCard>
                 ),
                 AnimatedContainer(
                   constraints: BoxConstraints(
-                      minHeight: _authMode == AuthMode.Signup ? 60 : 0, 
-                      maxHeight: _authMode == AuthMode.Signup ? 120 : 0
-                    ),
+                      minHeight: _authMode == AuthMode.Signup ? 60 : 0,
+                      maxHeight: _authMode == AuthMode.Signup ? 120 : 0),
                   curve: Curves.easeIn,
                   duration: const Duration(milliseconds: 300),
                   child: FadeTransition(
@@ -267,8 +265,8 @@ class _AuthCardState extends State<AuthCard>
                       position: _slideAnimation,
                       child: TextFormField(
                         enabled: _authMode == AuthMode.Signup,
-                        decoration:
-                            const InputDecoration(labelText: 'Confirm Password'),
+                        decoration: const InputDecoration(
+                            labelText: 'Confirm Password'),
                         obscureText: true,
                         validator: _authMode == AuthMode.Signup
                             ? (value) {
@@ -287,24 +285,32 @@ class _AuthCardState extends State<AuthCard>
                 if (_isLoading)
                   const CircularProgressIndicator()
                 else
-                  RaisedButton(
+                  ElevatedButton(
                     onPressed: _submit,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 30.0, vertical: 8.0),
+                      textStyle: TextStyle(
+                        color: Theme.of(context).primaryTextTheme.button?.color,
+                      ),
+                      backgroundColor: Theme.of(context).primaryColor,
                     ),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 30.0, vertical: 8.0),
-                    color: Theme.of(context).primaryColor,
-                    textColor: Theme.of(context).primaryTextTheme.button?.color,
                     child:
                         Text(_authMode == AuthMode.Login ? 'LOGIN' : 'SIGN UP'),
                   ),
-                FlatButton(
+                TextButton(
                   onPressed: _switchAuthMode,
-                  padding:
+                  style: TextButton.styleFrom(
+                    padding:
                       const EdgeInsets.symmetric(horizontal: 30.0, vertical: 4),
-                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  textColor: Theme.of(context).primaryColor,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    textStyle: TextStyle(
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  ),
                   child: Text(
                       '${_authMode == AuthMode.Login ? 'SIGNUP' : 'LOGIN'} INSTEAD'),
                 ),
