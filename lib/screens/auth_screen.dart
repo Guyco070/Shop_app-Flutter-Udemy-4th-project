@@ -273,6 +273,7 @@ class _AuthCardState extends State<AuthCard>
                                 if (value != _passwordController.text) {
                                   return 'Passwords do not match!';
                                 }
+                                return null;
                               }
                             : null,
                       ),
@@ -304,8 +305,8 @@ class _AuthCardState extends State<AuthCard>
                 TextButton(
                   onPressed: _switchAuthMode,
                   style: TextButton.styleFrom(
-                    padding:
-                      const EdgeInsets.symmetric(horizontal: 30.0, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 30.0, vertical: 4),
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     textStyle: TextStyle(
                       color: Theme.of(context).primaryColor,
